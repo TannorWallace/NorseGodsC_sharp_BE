@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using NorseGodApi.Data;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace NorseGodApi.Controllers
 {
@@ -10,6 +11,26 @@ namespace NorseGodApi.Controllers
   [ApiController]
   public class GodsController : ControllerBase
   {
+    private readonly GodsRepository _repository;
+    public GodsController(GodsRepository repository)
+    {
+      _repository = repository;
+    }
+    // POST api/values
+    [HttpPost]
+    public ActionResult<Gods> Post([FromBody] Gods gods)
+    {
+      try
+      {
+        return Ok(_repository.CreateGods(gods));
+      }
+      catch (Exception.e)
+      {
+
+        return BadRequest(e.Message);
+      }
+    }
+
     // GET api/values
     [HttpGet]
     public ActionResult<IEnumerable<string>> Get()
@@ -24,11 +45,6 @@ namespace NorseGodApi.Controllers
       return "value";
     }
 
-    // POST api/values
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
 
     // PUT api/values/5
     [HttpPut("{id}")]

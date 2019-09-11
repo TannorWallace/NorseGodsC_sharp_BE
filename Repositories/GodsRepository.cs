@@ -13,6 +13,11 @@ namespace NorseGodApi.Data
     {
       _db = db;
     }
+
+    internal object CreateGods(Gods gods)
+    {
+      throw new NotImplementedException();
+    }
     // NOTE next work on getting the SQL database set up and create the tabels that reflect the model you made! Keep it up bud! Practice makes...better in coding (LAWL!)
   }
 }
