@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
+using NorseGodApi.Data;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
-
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,15 +13,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+
 
 namespace NorseGodApi
 {
   public class Startup
   {
-    // private object services;
-
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
@@ -31,7 +29,22 @@ namespace NorseGodApi
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      services.AddMvc();
+      // TODO register all Transient informations
+      services.AddTransient<IDbConnection>(x => CreateDBContext());
+      services.AddTransient<GodsRepository>();
+
+
+
+    }
+
+    private IDbConnection CreateDBContext()
+    {
+      var _connectionString = Configuration.GetSection("DB").GetValue<string>("gearhost");
+      var connection = new MySqlConnection(_connectionString);
+      connection.Open();
+      return connection;
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,22 +53,19 @@ namespace NorseGodApi
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
+        app.UseCors("CorsDevPolicy");
       }
       else
       {
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
       }
+      //NOTE I dont remember what UseHttpsRedirection is but it was in the reference so better safe than sorry (shrug)
+      // app.UseHttpsRedirection();
 
-      services.AddMvc();
-      services.AddTransient<IDbConnection>(x => CreateDBContext());
-
-
-
-
-
-      app.UseHttpsRedirection();
+      app.UseDefaultFiles();
+      app.UseStaticFiles();
       app.UseMvc();
     }
   }
 }
+
