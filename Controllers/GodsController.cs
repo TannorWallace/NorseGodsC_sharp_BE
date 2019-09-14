@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using NorseGodApi.Models;
 
+
+
 namespace NorseGodApi.Controllers
 {
   [Route("api/[controller]")]
@@ -25,7 +27,7 @@ namespace NorseGodApi.Controllers
       {
         return Ok(_repository.CreateGods(gods));
       }
-      catch (Exception.e)
+      catch (Exception e)
       {
 
         return BadRequest(e.Message);
@@ -34,16 +36,31 @@ namespace NorseGodApi.Controllers
 
     // GET api/values
     [HttpGet]
-    public ActionResult<IEnumerable<string>> Get()
+    public ActionResult<IEnumerable<Gods>> GetAllGods()
     {
-      return new string[] { "value1", "value2" };
+      try
+      {
+        return Ok(_repository.GetAllGods());
+      }
+      catch (Exception e)
+      {
+        return BadRequest(e.Message);
+      }
     }
 
     // GET api/values/5
     [HttpGet("{id}")]
-    public ActionResult<string> Get(int id)
+    public ActionResult<Gods> Get(int id)
     {
-      return "value";
+      try
+      {
+        return Ok(_repository.GetGodsById(id));
+      }
+      catch (Exception e)
+      {
+
+        return BadRequest(e.Message);
+      }
     }
 
 
@@ -55,8 +72,17 @@ namespace NorseGodApi.Controllers
 
     // DELETE api/values/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public ActionResult<Gods> DeleteGodById(int id)
     {
+      try
+      {
+        return Ok(_repository.DeleteGodById(id));
+      }
+      catch (Exception e)
+      {
+
+        return BadRequest(e.Message);
+      }
     }
   }
 }
